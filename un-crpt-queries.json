@@ -1,0 +1,383 @@
+{
+  "cells": [
+    {
+      "id": "608af0e6-3cf7-4d46-bf48-d3dff393ddda",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "# City Resilience Profiling Tool\n\n## Types of Questions\n_... that our tool should be able to answer_\n\n* What are the highest risks (i.e. that cause most impact)?\n* Which elements and components of the city are affected by floods?\n* What are the indicators (i.e. data) relate to the elements affected by floods?\n* What are alternatives that would change the risks (i.e. counterfactuals)?\n* What is the relationship between shocks (chain of events\n* What are the 2nd or 3rd level effects of a flood?\n\n## Ontology\n\n![](https://drive.google.com/uc?export=download&id=1CSUIXswH4le2zXR8OjhAMw1iUd-Nann9)\n\n\n## Use Case from a real city\n\n* Flooding is a well known problem in the city.\n* Around 50% of indicators collected.\n* Some data on historical significant shock impacts.\n* Interest of the city is economy.\n* Following the interest of the city, first assessment would focus on 18 economy indicators and 8 mobility indicators as the base for providing recommendations for action.\n\nAdditional analysis using the knowledge graph:\n\n* Impact of flooding showing relevance over the economy of the city\n* Impact of shocks triggered by flood \n* Impact of all these shocks over all the urban elements\n",
+      "type": "markdown"
+    },
+    {
+      "id": "fede1bc3-17ca-48bc-9292-4988ba2eb301",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "Initial exercise: see the occurrences of flooding over total number of shock impacts\n",
+      "type": "markdown"
+    },
+    {
+      "id": "077ad541-0caf-48d5-b66c-f43eb2864b8f",
+      "inputs": [
+      ],
+      "isCodeFolded": false,
+      "name": "un-crpt-queries-shock_type_name_to_shock_impact_name_and_date",
+      "source": "def shock_type_name_to_shock_impact_subtype_name_and_date(stn, sstn, dt) =\n  shock_type_name_to_shock_subtype_name(stn, sstn) and \n  shock_subtype_name_to_shock_impact(sstn, s) and\n  shock_impact_date(s, dt)\n  from s",
+      "type": "install"
+    },
+    {
+      "id": "52bed5ee-971f-41ff-97f8-0d3e0bfa148c",
+      "inputs": [
+      ],
+      "isCodeFolded": false,
+      "name": "",
+      "source": "shock_type_name_to_shock_impact_subtype_name_and_date[\"FLOOD\"]",
+      "type": "query"
+    },
+    {
+      "id": "f0ab8734-e2c5-45e4-bccc-6ece39e5be2a",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "count[shock_type_name_to_shock_impact_subtype_name_and_date[\"FLOOD\"]]",
+      "type": "query"
+    },
+    {
+      "id": "d9a52c93-fc6c-45fb-9551-41ff04570ba2",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "For comparison, the total numnber of shocks in the city is shown below",
+      "type": "markdown"
+    },
+    {
+      "id": "465c3203-e669-43bf-b8f2-880bffb93be8",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "count[shock_impact_date]",
+      "type": "query"
+    },
+    {
+      "id": "6035e297-bb97-4aff-b41d-40b74f76453b",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "Impact of flooding showing relevance over the economy of the city\n\n* Impact on people → Directly affected people\n* Direct impact on economy → Loss of working days\n* Direct impact on economy → Loss of jobs\n",
+      "type": "markdown"
+    },
+    {
+      "id": "c9db22ee-6b22-4884-9d98-8a77d6ee18a6",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-3",
+      "source": "def shock_type_name_to_shock_and_loss_of_working_days(stn, s, lowd) =\n  shock_type_name_to_shock_impact(stn, s) and\n  shock_impact_loss_of_working_days(s, lowd) ",
+      "type": "install"
+    },
+    {
+      "id": "16b22305-7ca3-49b1-bd07-9fa46020660f",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "sum[shock_type_name_to_shock_and_loss_of_working_days[\"FLOOD\"]]",
+      "type": "query"
+    },
+    {
+      "id": "9ff555b5-88bc-4c7f-b7d4-48f42bd8811a",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "*NOTE*: the data may be incomplete, thus the low number of people",
+      "type": "markdown"
+    },
+    {
+      "id": "cdf89392-65f3-46c8-9647-8d5644a0e949",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-4",
+      "source": "def shock_type_name_to_shock_and_nr_of_people_driectly_affected(stn, s, nr_aff) =\n  shock_type_name_to_shock_impact(stn, s) and\n  shock_impact_people_directly_affected(s, nr_aff) ",
+      "type": "install"
+    },
+    {
+      "id": "1eaea50e-48fd-4fb5-8141-ae7e785be036",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "sum[shock_type_name_to_shock_and_nr_of_people_driectly_affected[\"FLOOD\"]]",
+      "type": "query"
+    },
+    {
+      "id": "6578fd4d-0ab9-41aa-bec1-d7f036158c22",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-12",
+      "source": "def shock_type_name_to_shock_and_loss_of_jobs(stn, s, l_o_j) =\n  shock_type_name_to_shock_impact(stn, s) and\n  shock_impact_loss_of_jobs(s, l_o_j) ",
+      "type": "install"
+    },
+    {
+      "id": "73d724d5-cce9-4ba3-9715-4c6dd2c38889",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "def output = sum[shock_type_name_to_shock_and_loss_of_jobs[\"FLOOD\"]]",
+      "type": "query"
+    },
+    {
+      "id": "56467a2a-94ad-423f-9eaf-6764d704a56a",
+      "inputs": [
+      ],
+      "isCodeFolded": false,
+      "name": "un-crpt-queries-model-14",
+      "source": "def shock_type_to_indicator(stn, i_c, i_d, i_v) =\n  from_shock_type_name(stn, st) and\n  shock_subtype_belongs_to_shock_type(sst, st) and\n  from_shock_subtype_name(sstn, sst) and\n  indicator_code(i, i_c) and\n  indicator_value(i, i_v) and\n  indicator_description(i, i_d) and\n  indicator_to_shock_subtype_name(i, sstn)\n  from i, st, sstn, sst",
+      "type": "install"
+    },
+    {
+      "id": "4fda34f5-68dc-44c6-b179-5e08bd259b6d",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "shock_type_to_indicator[\"FLOOD\"]",
+      "type": "query"
+    },
+    {
+      "id": "015302b5-37a0-449e-8503-ce0c75a85632",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "We can now investigate if improving any of these indicators would also help resilience\nagainst different type of shocks. This would be challenging using classic methods, e.g. Excel.",
+      "type": "markdown"
+    },
+    {
+      "id": "2daff6ba-4578-4e48-9107-1a54105a7c54",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-15",
+      "source": "def indicator_code_to_indicator_attr_shock_subtype_name(i_c, i_d, sstn) =\n  indicator_code(i, i_c) and\n  indicator_description(i, i_d) and\n  indicator_to_shock_subtype_name(i, sstn)\n  from i",
+      "type": "install"
+    },
+    {
+      "id": "7c733940-9471-490e-87e8-f8a1b21f9da8",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "indicator_code_to_indicator_attr_shock_subtype_name[\"3.2.3.3.2\"]",
+      "type": "query"
+    },
+    {
+      "id": "120eea23-020e-436b-891c-3bdd8e74dcc3",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "*NOTE*: the data may be incomplete, thus we see no additional shock subtypes here\n",
+      "type": "markdown"
+    },
+    {
+      "id": "5935fa34-cc42-47f1-99bd-458633370c11",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "Impact of shocks triggered by flood \n\n* Shocks triggered by flood?\n* Which are the red indicators related to the shocks triggered by flood?\n* How much is \"Economic Underperformance\" is jeopardized by flooding?",
+      "type": "markdown"
+    },
+    {
+      "id": "64325fdc-17ab-4dfe-ba99-e5292949803b",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-5",
+      "source": "def shock_type_name_to_triggered_shock_subtype_name(stn, tr_sst_n) = \n  shock_type_name_to_shock_impact(stn, s) and\n  shock_impact_caused_shock(s, tr_sst_n)\n  from s",
+      "type": "install"
+    },
+    {
+      "id": "5af3f18c-075b-4904-ae25-4ed21c56ee70",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "shock_type_name_to_triggered_shock_subtype_name[\"FLOOD\"]",
+      "type": "query"
+    },
+    {
+      "id": "3626db64-ec9e-4118-a1e4-6e8ffad03e06",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-7",
+      "source": "def priority_matter_to_indicator_code_and_value(pm, i_c, i_d, i_v) = \n  indicator_code(i, i_c) and\n  indicator_description(i, i_d) and\n  indicator_value(i, i_v) and\n  indicator_to_prioritymatter_name(i, pm)\n  from i",
+      "type": "install"
+    },
+    {
+      "id": "886a6453-9214-4552-ab3b-8c340666f174",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "priority_matter_to_indicator_code_and_value[\"Economic Underperformance\"]",
+      "type": "query"
+    },
+    {
+      "id": "8cb5b9f2-e250-4f2c-9940-bcf5ccb78c59",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-8",
+      "source": "// List the indicators with Red value for triggered shocks subtypes for a cause\ndef triggered_red_indicator_and_shock_subtype(cause, i_c, i_d, i_v, sstn) = \n  indicator_value(i, i_v) and\n  i_v = \"Red\" and\n  indicator_code(i, i_c) and\n  indicator_description(i, i_d) and\n  indicator_to_shock_subtype_name(i, sstn) and\n  sstn = shock_type_name_to_triggered_shock_subtype_name[cause]\n  from i",
+      "type": "install"
+    },
+    {
+      "id": "fe46b9f7-3c8c-4ade-bc09-c4bec18c4399",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "triggered_red_indicator_and_shock_subtype[\"FLOOD\"]",
+      "type": "query"
+    },
+    {
+      "id": "bb6f03de-b64e-4df9-a6b1-9fa142a52427",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "If this indicator is to be improved, the resilience against the following shocks could also improve:",
+      "type": "markdown"
+    },
+    {
+      "id": "8336217b-959f-4adc-b6f2-88418de2c58b",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-16",
+      "source": "def indicator_code_to_indicator_desc_shock_subtype_name(i_c, i_d, sstn) =\n  indicator_code(i, i_c) and\n  indicator_description(i, i_d) and\n  indicator_to_shock_subtype_name(i, sstn)\n  from i",
+      "type": "install"
+    },
+    {
+      "id": "e0898b79-440d-4782-8e31-f1933d4bd3d7",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "indicator_code_to_indicator_desc_shock_subtype_name[\"1.2.2.1\"]",
+      "type": "query"
+    },
+    {
+      "id": "0d2bdd1b-13d8-4c38-ba1b-da3c99203b3e",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "Impact of shocks triggered by flood \n\n * Which are the urban elements affected by flood\n \n * Which are the red indicators related to the urban elements impacted by flood and triggered shocks\n",
+      "type": "markdown"
+    },
+    {
+      "id": "cd0977e3-2b47-4bf2-95a8-8447f0083f58",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-13",
+      "source": "def shock_type_name_to_affected_urban_element(stn, ue) =\n  shock_type_name_to_shock_impact(stn, s) and\n  shock_impact_affected_urban_elements(s, ue)\n  from s",
+      "type": "install"
+    },
+    {
+      "id": "987c56be-989b-438c-912f-3e18c6ccb62a",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "shock_type_name_to_affected_urban_element[\"FLOOD\"]",
+      "type": "query"
+    },
+    {
+      "id": "aa2ef554-8424-418c-affd-bf265e715ab4",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-9",
+      "source": "def triggered_shock_subtype_affecting_urban_elements(cause, sstn, e) =\n  sstn = shock_type_name_to_triggered_shock_subtype_name[cause] and\n  shock_subtype_name_to_affected_urban_element(sstn, e)",
+      "type": "install"
+    },
+    {
+      "id": "d344fdf6-eb86-4825-a679-fbf1eec83f01",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "triggered_shock_subtype_affecting_urban_elements[\"FLOOD\"]\n\n// only affected urban elements\n//triggered_shock_subtype_affecting_urban_elements[\"FLOOD\"][_]\n",
+      "type": "query"
+    },
+    {
+      "id": "ff01e6a4-01e3-4b9a-b310-8b5d56862c9b",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "In general, we can go beyond 2nd order shock triggers; we can explore the transitively triggered (n-order) shocks for each shock subtype.",
+      "type": "markdown"
+    },
+    {
+      "id": "2a533dda-5088-4b58-be1d-048192af0239",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-17",
+      "source": "def shock_trigger_transitively_other_shock = shock_impact_caused_shock . from_shock_subtype_name . shock_subtype_to_impact\ndef shock_trigger_transitively_other_shock = c, s: \n    shock_trigger_transitively_other_shock(c, m) and\n    shock_trigger_transitively_other_shock(m, s)\n    from m ",
+      "type": "install"
+    },
+    {
+      "id": "15266331-991f-42c7-8bfe-ac1dc5359e40",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "// Printing type names to make the results more readable\nfrom_shock_subtype_name . shock_subtype_to_impact . shock_trigger_transitively_other_shock . shock_impact_subtype . (transpose[from_shock_subtype_name])",
+      "type": "query"
+    },
+    {
+      "id": "51b8e550-d83c-486d-bb7e-397fafe0bdf6",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "",
+      "source": "Long-term impacts\n\n* Stresses impacting the same elements or indicators as Flood",
+      "type": "markdown"
+    },
+    {
+      "id": "14f52635-c854-43ed-afe2-5bec15fd6716",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-10",
+      "source": "def shock_type_to_urban_element_with_stress(stn, uen, strn) = \n  stress_name_to_urban_element_name(strn, uen) and\n  uen = shock_type_name_to_affected_urban_element[stn]",
+      "type": "install"
+    },
+    {
+      "id": "509bd7fa-c51b-481a-bc82-b0ad544f676d",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "shock_type_to_urban_element_with_stress[\"FLOOD\"]",
+      "type": "query"
+    },
+    {
+      "id": "825113ca-5512-4e85-a0f2-03050f6ef20b",
+      "inputs": [
+      ],
+      "name": "un-crpt-queries-model-11",
+      "source": "// Intersection of stresses + indicators and shocks + indicators\ndef shock_to_stress_indicators_impacted(stn, strn, i_c, i_d, i_v, sstn) =   \n  indicator_code(i, i_c) and\n  indicator_value(i, i_v) and\n  indicator_description(i, i_d) and\n  indicator_to_shock_subtype_name(i, sstn) and\n  shock_type_name_to_shock_subtype_name(stn, sstn) and \n  indicator_stress(i, str) and\n  stress_from_name(strn, str)\n  from i, str",
+      "type": "install"
+    },
+    {
+      "id": "e17958c9-446c-4c5a-b3b1-8ed3980bab14",
+      "inputs": [
+      ],
+      "name": "",
+      "source": "shock_to_stress_indicators_impacted[\"FLOOD\"]",
+      "type": "query"
+    },
+    {
+      "id": "4d9fd937-0d94-4216-b7d5-2554f54bb070",
+      "inputs": [
+      ],
+      "isCodeFolded": true,
+      "name": "un-crpt-queries-helpers",
+      "source": "// Helper relations - not part of the discussions during the main demo\n\ndef shock_type_name_to_shock_subtype_name(stn, sstn) = \n  from_shock_type_name(stn, st) and\n  from_shock_subtype_name(sstn, sst) and\n  shock_subtype_belongs_to_shock_type(sst, st)\n  from sst, st\n\ndef shock_subtype_name_to_shock_impact(sstn, s) = \n  shock_subtype_to_impact(sst, s) and\n  from_shock_subtype_name(sstn, sst)\n  from sst\n\ndef shock_subtype_name_to_affected_urban_element(sstn, e) = \n  from_shock_subtype_name(sstn, sst) and\n  shock_impact_subtype(s, sst) and\n  shock_impact_affected_urban_elements(s, e)\n  from sst, s\n\ndef shock_type_name_to_affected_urban_element(stn, e) = \n  from_shock_type_name(stn, st) and\n  shock_type_contains_shock_subtype(st, sst) and\n  shock_impact_subtype(s, sst) and\n  shock_impact_affected_urban_elements(s, e)\n  from sst, st, s\n\ndef shock_type_name_to_shock_impact = \n  shock_type_name_to_shock_subtype_name . shock_subtype_name_to_shock_impact\n\ndef indicator_to_prioritymatter_name(i, pmn) = \n  indicator_prioritymatter(i, pm) and \n  prioritymatter:priority_matter(pm, pmn) \n  from pm\n\ndef indicator_to_shock_subtype_name(i, sstn) = \n  indicator_shock_subtype(i, sst) and\n  from_shock_subtype_name(sstn, sst)\n  from sst\n\ndef stress_name_to_urban_element_name(strn, uen) = \n  (stress_from_name . stress_urban_element_code)(strn, uec) and\n  urban_element_code(ue, uec) and\n  urban_element_name(ue, uen)\n  from ue, uec\n",
+      "type": "install"
+    }
+  ],
+  "metadata": {
+    "notebookFormatVersion": "0.0.1"
+  }
+}
